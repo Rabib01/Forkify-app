@@ -1,0 +1,782 @@
+Sometimes in project fielswedo not have an index.htmlandso it is perfectly finetohave index.js or any other javaScript file as the starting file. That file could also recide in a different empty folder which is perfectly fine as well 
+
+steps. 
+create package.json 
+fix the start and the build scripts as : 
+"scripts": {
+    "start": "parcel index.html",
+    "build": "parcel build index.html"
+  },
+Then install parcell as a dev dependency
+npm i parcel -D: install the latest version of parcel
+npm i parcel@next -D →this is done to install the latest betaversion 
+i did → npm i parcel@2 -D
+
+then on terminal npm run start or simply npm start 
+
+usingthe fetch funciton means that it will return a promise and since we arein an async function we can tehn 
+await that promise. we are stoopingthe codeexecution at this point but that is not a problem for now. 
+
+this is an async function anyway which only runs in the background, weare not blocking our main thread of execution herer 
+
+oncewehave that result we then needto convert that function to json 
+
+The json method is a method that is available on all response objects. a response oibject isexactly what the fetchfunction returns 
+
+const showRecipie = async function () {
+  try {
+    const response = await fetch(
+      'https://forkify-api.jonas.io/api/v2/recipes/5ed6604591c37cdc054bc886'
+    );
+    const data = await response.json();
+
+  } catch (error) {
+    // console.error();
+    alert(error);
+  }
+};
+
+this  will return another promisewhich wehaveto await again and thenhandle that promisebyu getting that data stored in thatdata variable
+
+incase of error the response object will have an ok flag thqat will give us flase
+Response {type: 'cors', url: 'https://forkify-api.jonas.io/api/v2/recipes/zzz', redirected: false, status: 400, ok: false, …
+
+We also wantto be ableto formatthe response object as wehave some underscoresand we donot want that in JavaScript 
+
+ const data = await response.json();
+
+What is data?
+
+👉 data is a variable that stores the resolved value returned by response.json().
+
+More precisely:
+
+response.json() returns a Promise
+
+await waits for that Promise to resolve
+
+The resolved value is usually a JavaScript object or array
+
+That value is assigned to the variable named data
+
+So:
+
+data is the parsed JSON body of the HTTP response
+
+Recipie rendering =---===
+Inorder to render this on the DOM, →
+const markup = `
+        <figure class="recipe__fig">
+          <img src="src/img/${recipe.image}" alt="${recipe.title}" class="recipe__img" />
+          <h1 class="recipe__title">
+            <span>${recipe.title}</span>
+          </h1>
+        </figure>
+
+          <div class="recipe__details">
+          <div class="recipe__info">
+            <svg class="recipe__info-icon">
+              <use href="src/img/icons.svg#icon-clock"></use>
+            </svg>
+            <span class="recipe__info-data recipe__info-data--minutes">${recipe.cookingTime}</span>
+            <span class="recipe__info-text">minutes</span>
+          </div>
+          <div class="recipe__info">
+            <svg class="recipe__info-icon">
+              <use href="src/img/icons.svg#icon-users"></use>
+            </svg>
+            <span class="recipe__info-data recipe__info-data--people">${recipe.servings}</span>
+            <span class="recipe__info-text">servings</span>
+
+            <div class="recipe__info-buttons">
+              <button class="btn--tiny btn--increase-servings">
+                <svg>
+                  <use href="src/img/icons.svg#icon-minus-circle"></use>
+                </svg>
+              </button>
+              <button class="btn--tiny btn--increase-servings">
+                <svg>
+                  <use href="src/img/icons.svg#icon-plus-circle"></use>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="recipe__user-generated">
+            <svg>
+              <use href="src/img/icons.svg#icon-user"></use>
+            </svg>
+          </div>
+          <button class="btn--round">
+            <svg class="">
+              <use href="src/img/icons.svg#icon-bookmark-fill"></use>
+            </svg>
+          </button>
+          </div>
+
+        <div class="recipe__ingredients">
+          <h2 class="heading--2">Recipe ingredients</h2>
+          <ul class="recipe__ingredient-list">
+            <li class="recipe__ingredient">
+              <svg class="recipe__icon">
+                <use href="src/img/icons.svg#icon-check"></use>
+              </svg>
+              <div class="recipe__quantity">1000</div>
+              <div class="recipe__description">
+                <span class="recipe__unit">g</span>
+                pasta
+              </div>
+            </li>
+
+            <li class="recipe__ingredient">
+              <svg class="recipe__icon">
+                <use href="src/img/icons.svg#icon-check"></use>
+              </svg>
+              <div class="recipe__quantity">0.5</div>
+              <div class="recipe__description">
+                <span class="recipe__unit">cup</span>
+                ricotta cheese
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="recipe__directions">
+          <h2 class="heading--2">How to cook it</h2>
+          <p class="recipe__directions-text">
+            This recipe was carefully designed and tested by
+            <span class="recipe__publisher">${recipe.publisher}The Pioneer Woman</span>. Please check out
+            directions at their website.
+          </p>
+          <a
+            class="btn--small recipe__btn"
+            href="${recipe.sourceURL}/"
+            target="_blank"
+          >
+            <span>Directions</span>
+            <svg class="search__icon">
+              <use href="src/img/icons.svg#icon-arrow-right"></use>
+            </svg>
+          </a>
+        </div>
+    `;
+
+WE need to use insert.adjacentHTML on the parent element
+
+-----After all of this shitis done we are going to needto worry about the motehrfucking ingredientrs --- 
+We are goijg to need to loopover the ingredients array and then for each of themwe are going to create this kind of markup here . 
+
+          <li class="recipe__ingredient">
+              <svg class="recipe__icon">
+                <use href="src/img/icons.svg#icon-check"></use>
+              </svg>
+              <div class="recipe__quantity">0.5</div>
+              <div class="recipe__description">
+                <span class="recipe__unit">cup</span>
+                ricotta cheese
+              </div>
+            </li>..
+
+Basically create an ordered list item for eachone of those ingredients for each of hte ingredients that exiosts there, 
+
+recipe.ingredients and then loop over them using some arary methods.. 
+what array methods to use here ?? 
+in the end we need a returned stringof html 
+forEach is not hte way to go here
+map → retuens a new array with the same lenght and then wecan join all of hte adjacent elementsof the ingfredients together 
+
+For the ingredients each array element is an object that hasthe quantity, unit and description
+
+        ${recipe.ingredients.map(ing => {
+            return `
+            <li class="recipe__ingredient">
+              <svg class="recipe__icon">
+                <use href="src/img/icons.svg#icon-check"></use>
+              </svg>
+              <div class="recipe__quantity">${ing.quantity}</div>
+              <div class="recipe__description">
+                <span class="recipe__unit">${ing.unit}</span>
+                ${ing.description}
+              </div>
+            </li>
+            `;
+          })}
+Then we need to convert this from an array of strings into onebig string 
+
+Implementinga loading spinnerisa common kind of pattern that we seeinallkinds of applications 
+
+
+const renderSpinner = function (parentEl) {
+  const markup = `
+        <div class="spinner">
+          <svg>
+            <use href="${icons}#icon-loader"></use>
+          </svg>
+        </div>
+        `;
+  //adding the htmltohtedom as achildof theparentelement
+  parentEl.innerHTML = '';
+
+  parentEl.insertAdjacentHTML('afterbegin', markup);
+};
+
+renderSpinner(recipeContainer)
+
+
+You shouldalso think of transpiling and polyfilling wheneverfyou are doingyourdamnprojects
+
+         
+npm i core-js regenerator-runtime → installing multiple node packages at the same time → also the packages that you are going to bneed for transpiling and[polyfilling] 
+
+
+------------------------------------------
+the next part of the project is to hookup 2 eventListener so that the recipei isloaded after one ofthese event listenerrs 
+
+user selectsrecipie and page loads with recipie id → then loading and rendering of recipies
+
+everthing that comesafterthehastagiscallledthe hash 
+recipie_id/#mamsdjasfsmd,fsdkfn 
+
+wheneve the hash changes a newrecipiesi going to be ;loaderd
+thechangingofthe haash is an event that wecan listen ofr 
+
+
+changedhash → take the id for the recipie → load and render the recipie with that id.
+
+const id = window.location;
+    this is the address url 
+
+after thiswe do not yethave an event listener on load event → insimpletermseven though when the recipie loadswhen we take the url and then copy and paste itonanother tab nothing happens as we don ot havethat what thefuck 
+
+
+// For recipie, search and bookmarks
+
+// inside of hte model qwe are going to havea big state object → inside the state objects we are going to have recipie() search() and bookmarks(). There will alsobe a function for loadingthe recipie loadRecipie()
+
+/**
+ * This function will then be called by controlRecipies whichsitsinm between loading the recipiesand then rendering it using the viewrender(
+ *The model is likethe brain pf the project and so will have teh state
+ * There isa live connevtion between the exports andhte imports → when the state objec gets updatedbyloadRecipe() then that state isalo updated in teh controller which importsthestate
+ *
+ *
+ *
+ */
+
+//------------------------------------------------------------------------------------------------------------------//
+
+
+// fetching the data from the forkify api
+// thisfunction willnot chanreturnge anything, it isonly gfoingto changethe state object
+//nota pure function has a side effect of manipulating the state.recipe
+
+// renderSpinner(recipeContainer) → The parent element in thiscaleisgoingothe the recipiecontainer
+
+    /**
+     * Object destructuring confusion !!
+     * inside data.data is the recipe object that has {id:...,title:...etc}
+     * to access that we need data.data.recipe
+     * to put this into recipe  variable we omit recipe from data.data.recipe and state {recipe} = data.data which basically means data.data.recipe
+     * After all of this is done we then
+     */
+
+
+/**
+ * What would happen if you did this?
+state = state.state.recipe;
+
+
+You would replace the entire store with just one recipe object.
+
+So after this line:
+
+state = {
+  id: "5ed6604591c37cdc054bcd09",
+  title: "Pizza",
+  servings: 4,
+  ingredients: [...]
+}
+
+
+Now all of this is gone forever:
+
+state.loadRecipe
+state.state.search
+state.state.bookmarks
+
+
+Your app is now broken.
+
+This is the same mistake as doing
+const user = {
+  name: "Rabib",
+  age: 22,
+  address: { city: "Dhaka" }
+};
+
+user = user.address.city;  // ❌
+
+
+Now user is "Dhaka" — not a user anymore.
+
+2)
+const { recipe } = state.state.recipe;
+This means:
+
+“Inside state.state.recipe, find a property called recipe.”
+
+So JS will look for:
+
+js
+Copy code
+state.state.recipe.recipe
+ and stord ikn another variable called data
+
+const { x } = obj;
+
+ */
+
+
+
+    // response.then(result => result.json()) this is wrong, do it thisway ↑ to convert the data ofthe responseto json
+
+
+export const getJSON = async function (url) {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`${data.message} : ${response.status}`);
+    const data = await response.json();
+    return data; → This data is theresolved valueof this promise, which is ↓
+                                                                          awaited in const data = await getJSON(`${API_URL}/${id}`); and stord ikn another variable called data
+                                                                        
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+
+Propagating an error from one async function to the next by rethrowing the error and catching that error in the catch block of thesecond function
+
+
+/**?? From the displayRecipeView.js 
+'use strict';
+import icons from 'url:../../img/icons.svg';
+// importing the icons
+// we arecurrently in the js folder giving the.. means that we would go back to the sourced folder and then from there weare going to the image fodler and then select the icon.svg//
+// .. would mean that we would always gotohteiconsfolder
+// sinceparcel 2ifwewant to addany staticfiles weneedto mention 'url:../file_path'
+
+// one module for each of theviews
+/// all ofthe rest ofthe code
+// we areusinga classherebecasewewill later have a parent class called view fromwhich RecipeView will inheritsomething
+// using classes makesall oftheseeasierto maintain. Also each View instance will havea coupleofpricate methods
+
+// import * from 'fractional' as Fraction; // any imports from nodemoduels does not require paths to bedeclared
+// console.log(Fraction);
+
+class RecipeView {
+  // render spinner and render error orsuccess messages
+  #parentElement = document.querySelector('.recipe');
+  #data;
+
+  render(data) {
+    this.#data = data;
+    const markup = this.#generateMarkup();
+    this.#clear();
+    this.#parentElement.insertAdjacentHTML('afterbegin', markup);
+  }
+
+  //just to get in the habit of abstracting some code we are creating a methid to clear the parent element and then to insertAdjacentHTML
+  #clear() {
+    this.#parentElement.innerHTML = ''; //this can beused by alltheviewsaslongsas each of them hasthis parentElelemtn property likethis one
+  }
+
+  // public method so that the controller can call this method here as it starts fetching the data
+  renderSpinner = function () {
+    const markup = `
+        <div class="spinner">
+          <svg>
+            <use href="${icons}#icon-loader"></use>
+          </svg>
+        </div>
+        `;
+    //adding the htmltohtedom as achildof theparentelement
+    this.#parentElement.innerHTML = '';
+    this.#parentElement.insertAdjacentHTML('afterbegin', markup);
+  };
+
+  #generateMarkup() {
+    return `
+        <figure class="recipe__fig">
+          <img src="${this.#data.imageURL}" alt="${
+      this.#data.title
+    }" class="recipe__img" />
+          <h1 class="recipe__title">
+            <span>${this.#data.title}</span>
+          </h1>
+        </figure>
+
+          <div class="recipe__details">
+          <div class="recipe__info">
+            <svg class="recipe__info-icon">
+              <use href="${icons}#icon-clock"></use>
+            </svg>
+            <span class="recipe__info-data recipe__info-data--minutes">${
+              this.#data.cookingTime
+            }</span>
+            <span class="recipe__info-text">minutes</span>
+          </div>
+          <div class="recipe__info">
+            <svg class="recipe__info-icon">
+              <use href="${icons}#icon-users"></use>
+            </svg>
+            <span class="recipe__info-data recipe__info-data--people">${
+              this.#data.servings
+            }</span>
+            <span class="recipe__info-text">servings</span>
+
+            <div class="recipe__info-buttons">
+              <button class="btn--tiny btn--increase-servings">
+                <svg>
+                  <use href="${icons}#icon-minus-circle"></use>
+                </svg>
+              </button>
+              <button class="btn--tiny btn--increase-servings">
+                <svg>
+                  <use href="${icons}#icon-plus-circle"></use>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="recipe__user-generated">
+            <svg>
+              <use href="${icons}#icon-user"></use>
+            </svg>
+          </div>
+          <button class="btn--round">
+            <svg class="">
+              <use href="${icons}#icon-bookmark-fill"></use>
+            </svg>
+          </button>
+          </div>
+
+        <div class="recipe__ingredients">
+          <h2 class="heading--2">Recipe ingredients</h2>
+          <ul class="recipe__ingredient-list">
+          ${this.#data.ingredients.map(this.#generateMarkupIngredient).join('')}
+        </div>
+
+        <div class="recipe__directions">
+          <h2 class="heading--2">How to cook it</h2>
+          <p class="recipe__directions-text">
+            This recipe was carefully designed and tested by
+            <span class="recipe__publisher">${
+              this.#data.publisher
+            }The Pioneer Woman</span>. Please check out
+            directions at their website.
+          </p>
+          <a
+            class="btn--small recipe__btn"
+            href="${this.#data.sourceURL}/"
+            target="_blank"
+          >
+            <span>Directions</span>
+            <svg class="search__icon">
+              <use href="${icons}#icon-arrow-right"></use>
+            </svg>
+          </a>
+        </div>
+    `;
+  }
+  #generateMarkupIngredient(ing) {
+    {
+      return `
+            <li class="recipe__ingredient">
+              <svg class="recipe__icon">
+                <use href="${icons}#icon-check"></use>
+              </svg>
+              <div class="recipe__quantity">${
+                ing.quantity ? ing.quantity : ''
+              }</div>
+              <div class="recipe__description">
+                <span class="recipe__unit">${ing.unit}</span>
+                ${ing.description}
+              </div>
+            </li>
+            `;
+    }
+  }
+}
+
+export default new RecipeView(); //→ we dont passany data in and wedont need any constructor even
+
+//waht to export to controller ?? → export everything ? in controller weimport and create a new RecipeView object → Might be possible to createmorethan one RecipeView and we do not want that
+// what to actually do? create and object here and then export that object to the controller
+// nothing will haveaccess to the RecipeView class hereexcep that object
+
+/**
+ * 
+🔑 Key rule
+
+map needs a function reference, not a function call.
+
+You write	Meaning
+map(fn)	“Here is the function. Call it for each item.”
+map(fn())	“Run this once now and give me the result.” ❌
+
+ */
+//
+
+
+/???.//From the Controller : 
+/**
+ * In themodelwe want to import everything,there are named exportsand default exports
+ * the named exports are the ones in which weexplicitly gavethemaname
+ * import * as model from 'model.js' → then we can have avvessto model.state and model.loadRecipe()
+ *
+ */
+import * as model from './model.js';
+import recipeView from './Views/displayRecipieView.js';
+
+import 'core-js/stable';
+import 'regenerator-runtime/runtime';
+import displayRecipieView from './Views/displayRecipieView.js';
+
+// console.log(icons);
+
+const recipeContainer = document.querySelector('.recipe');
+
+// NEW API URL (instead of the one shown in the video)
+// https://forkify-api.jonas.io
+
+///////////////////////////////////////
+
+console.log('hello');
+console.log('hello');
+console.log('hello');
+
+const controlRecipes = async function () {
+  //loading recipie
+  try {
+    const id = window.location.hash.slice(1);
+    // console.log(id);
+
+    if (!id) return;
+    recipeView.renderSpinner();
+
+    // loading the recipe|| also remember that thisasync functionisnotreturnoinganythingandso wearethereforenot storing any results into any newvariable || we will get accessto state.recipe
+    await model.loadRecipie(id); // async function and so will return a promise → so wehaveto await that function beforewe canmoveotothe next step of the function → one asyncf function is callinganother async function → async functionswillalways return a promise whichwillthen need to behandled later with await
+
+    //rendering recipie
+    displayRecipieView.render(model.state.recipe);
+    //
+  } catch (error) {
+    // console.error();
+    console.error(error);
+  }
+};
+
+// controlRecipes();
+
+// window.addEventListener('hashchange', controlRecipes); // duplicate code :: imagine 10events
+// window.addEventListener('load', controlRecipes);
+
+// same shit asthe one above ↑ and so we therefore are omitting code that are duplicating
+// ['hashchange', 'load'].forEach(event =>
+//   window.addEventListener(event, controlRecipes)
+// );
+
+const init = function () {
+  recipeView.addHandlerRender(controlRecipes);
+};
+
+init();
+
+
+Question and Answer 
+
+why do we need to pass in the message parameter here and not the fucking icons parammeter ?? 
+
+  renderError(message) {
+    const markup = 
+      <div class="error">
+      <div>
+          <svg>
+              <use href="${icons}#icon-alert-triangle"></use>
+            </svg>
+            </div>
+            <p>${message}. Please try again!</p>
+            </div>
+            ;
+    this.#clear();
+    this.#parentElement.insertAdjacentHTML('afterbegin', markup);
+  }
+
+
+
+  //////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Perfect follow-up — this is exactly the right thing to question.
+
+Short answer first, then the real explanation:
+
+We use
+this.#parentEl.querySelector('.search__field')
+to scope, protect, and future-proof the DOM access, instead of spraying document.querySelector() everywhere.
+
+Now let’s break it down properly 👇
+
+1️⃣ What this line is doing
+this.#parentEl.querySelector('.search__field').value = '';
+
+
+Translation in human language:
+
+“Inside my search component, find the input field and clear it.”
+
+That’s it.
+
+2️⃣ What #parentEl actually represents
+#parentEl = document.querySelector('.search');
+
+
+This means:
+
+.search is the root element of this view
+
+Everything this view touches must live inside it
+
+This view owns that DOM subtree
+
+So when you write:
+
+this.#parentEl.querySelector(...)
+
+
+You are saying:
+
+“Only look inside my component — nowhere else.”
+
+3️⃣ Why document.querySelector() is the bad habit here
+
+If you do this instead:
+
+document.querySelector('.search__field').value = '';
+
+
+You create 4 real problems 👇
+
+❌ 1. Global DOM dependency
+
+Now your code depends on:
+
+the entire document
+
+global class uniqueness
+
+no duplicate .search__field anywhere
+
+If another search bar is added later → 💥 bug.
+
+❌ 2. Tight coupling to HTML
+
+The controller or other files now need to know:
+
+exact class names
+
+exact DOM structure
+
+Change HTML → everything breaks.
+
+With #parentEl, only this file knows.
+
+❌ 3. Harder refactoring
+
+If tomorrow the markup changes:
+
+<form class="search">
+  <div class="wrapper">
+    <input class="search__field" />
+  </div>
+</form>
+
+
+With #parentEl → works
+With document.querySelector → risky and fragile
+
+❌ 4. Sloppy architecture (MVC violation)
+
+In MVC:
+
+View owns the DOM
+
+Controller does NOT touch selectors
+
+Model never sees HTML
+
+Using document.querySelector() everywhere breaks that separation.
+
+4️⃣ Performance (minor but real)
+document.querySelector()
+
+
+Searches the entire DOM tree
+
+this.#parentEl.querySelector()
+
+
+Searches a small subtree
+
+Not a big deal here — but good discipline.
+
+5️⃣ Why the # matters here
+#parentEl
+
+
+It’s private
+
+No other file can mess with it
+
+No accidental overrides
+
+No controller doing dumb stuff like:
+
+searchView.parentEl.innerHTML = '';
+
+
+This is defensive programming.
+
+6️⃣ Analogy that makes it click 🧠
+
+Think of your app like a building:
+
+document.querySelector() = searching the entire city
+
+#parentEl.querySelector() = searching inside your own apartment
+
+You don’t go door-to-door in the city to find your keys.
+You check your room.
+
+7️⃣ Brutal truth
+
+Yes — for a tiny script, this is overkill.
+But Jonas is training you for:
+
+large codebases
+
+teams
+
+refactors
+
+real production apps
+
+Once you scale past 1–2 files, this pattern stops feeling annoying and starts feeling necessary.
+
+Final one-liner to remember
+
+Views should be scoped, private, and self-contained — not global DOM hunters.
+
+If you want next:
+
+I’ll show what breaks when you add a second search bar
+
+or rewrite Forkify without this pattern so you can feel the pain 😈

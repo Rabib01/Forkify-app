@@ -1,0 +1,21 @@
+{
+  "name": "forkify",
+  "version": "1.0.0",
+  "description": "Application to search and add recipies",
+  "scripts": {
+    "start": "parcel index.html",
+    "build": "parcel build index.html"
+  },
+  "author": "Muhtasim Rabib",
+  "license": "ISC",
+  "devDependencies": {
+    "@parcel/transformer-sass": "^2.16.3",
+    "parcel": "^2.16.3"
+  },
+  "dependencies": {
+    "core-js": "^3.47.0",
+    "fractional": "^1.0.0",
+    "fracty": "^1.0.12",
+    "regenerator-runtime": "^0.14.1"
+  }
+}
