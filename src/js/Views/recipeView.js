@@ -2,77 +2,21 @@
 import View from './View.js';
 import icons from 'url:../../img/icons.svg';
 
-class RecipeView {
+class RecipeView extends View {
   // render spinner and render error orsuccess messages
   _parentElement = document.querySelector('.recipe');
-  _data;
   _errorMessage = 'Sorry! Recipe Could Not Be Found!';
   _message = '';
 
-  render(data) {
-    this._data = data;
-    const markup = this._generateMarkup();
-    this._clear();
-    this._parentElement.insertAdjacentHTML('afterbegin', markup);
-  }
-
-  _clear() {
-    this._parentElement.innerHTML = '';
-  }
-
-  // parameternameandthe function name should not be confused. AddHandleRender is the publisher and controlRecipes is the subscriber why is the parameter not called a subsctriber? Anyway namewhateveryoufuckingwant
   addHandlerRender(handler) {
     ['hashchange', 'load'].forEach(event =>
       window.addEventListener(event, handler),
     );
   }
 
-  renderError(message = this._errorMessage) {
-    const markup = `
-      <div class="error">
-      <div>
-          <svg>
-              <use href="${icons}#icon-alert-triangle"></use>
-            </svg>
-            </div>
-            <p>${message}. Please try again!</p>
-            </div>
-            `;
-    this._clear();
-    this._parentElement.insertAdjacentHTML('afterbegin', markup);
-  }
-
-  renderSuccess(message = this._message) {
-    const markup = `
-      <div class="message">
-      <div>
-          <svg>
-              <use href="${icons}#icon-smile"></use>
-            </svg>
-            </div>
-            <p>${message}. Please try again!</p>
-            </div>
-            `;
-    this._clear();
-    this._parentElement.insertAdjacentHTML('afterbegin', markup);
-  }
-
-  renderSpinner() {
-    const markup = `
-        <div class="spinner">
-          <svg>
-            <use href="${icons}#icon-loader"></use>
-          </svg>
-        </div>
-        `;
-    //adding the htmltohtedom as achildof theparentelement
-    this._clear();
-    this._parentElement.insertAdjacentHTML('afterbegin', markup);
-  }
-
   _generateMarkup() {
     return `
-        <figure class="recipe__fig">
+    <figure class="recipe__fig">
           <img src="${this._data.imageURL}" alt="${
             this._data.title
           }" class="recipe__img" />
@@ -115,9 +59,7 @@ class RecipeView {
           </div>
 
           <div class="recipe__user-generated">
-            <svg>
-              <use href="${icons}#icon-user"></use>
-            </svg>
+            
           </div>
           <button class="btn--round">
             <svg class="">

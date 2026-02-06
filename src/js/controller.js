@@ -1,26 +1,15 @@
-/**
- * In themodelwe want to import everything,there are named exportsand default exports
- * the named exports are the ones in which weexplicitly gavethemaname
- * import * as model from 'model.js' → then we can have avvessto model.state and model.loadRecipe()
- *
- */
 import * as model from './model.js';
-import recipeView from './Views/displayRecipieView.js';
+import recipeView from './Views/recipeView.js';
 import searchView from './Views/searchView.js';
 
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
-import displayRecipieView from './Views/displayRecipieView.js';
-// import View from './Views.js';
+import recipeView from './Views/recipeView.js';
+import resultsView from './Views/resultsView.js';
 
-// console.log(icons);
-
-// const recipeContainer = document.querySelector('.recipe');
-
-// NEW API URL (instead of the one shown in the video)
-// https://forkify-api.jonas.io
-
-///////////////////////////////////////
+if (module.hot) {
+  module.hot.accept();
+}
 
 console.log('hello');
 console.log('hello');
@@ -31,15 +20,16 @@ const controlRecipes = async function () {
 
   try {
     const id = window.location.hash.slice(1);
-    // console.log(id);
 
     if (!id) return;
-    recipeView.renderSpinner();
+    // recipeView.renderSpinner();
 
     await model.loadRecipie(id);
 
     //rendering recipie
-    displayRecipieView.render(model.state.recipe);
+    recipeView.render(model.state.recipe);
+    // console.log(model.state.recipe);
+    // console.log(resultsView);
   } catch (error) {
     recipeView.renderError(); //error handling
   }
@@ -48,6 +38,8 @@ const controlRecipes = async function () {
 const controlSearchResults = async function () {
   try {
     //get search Query
+    resultsView.renderSpinner();
+
     const query = searchView.getQuery();
     if (!query) return;
 
@@ -55,12 +47,12 @@ const controlSearchResults = async function () {
     await model.loadSearchResults(query);
 
     // Render Results
-    console.log(model.state.search.results);
+    resultsView.render(model.state.search.results);
   } catch (error) {
     console.error(error);
   }
 };
-controlSearchResults();
+// controlSearchResults();
 
 const init = function () {
   recipeView.addHandlerRender(controlRecipes);
