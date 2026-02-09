@@ -6,6 +6,8 @@ import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import recipeView from './Views/recipeView.js';
 import resultsView from './Views/resultsView.js';
+import paginationView from './Views/paginationView.js';
+// import paginationView from './Views/paginationView.js';
 
 // if (module.hot) {
 //   module.hot.accept();
@@ -48,15 +50,29 @@ const controlSearchResults = async function () {
 
     // Render Results
     resultsView.render(model.getSearchResultsPage(3));
+
+    // Render the pagination on each page
+    paginationView.render(model.state.search);
   } catch (error) {
     console.error(error);
   }
 };
 // controlSearchResults();
 
+const controlPagination = function (goToPage) {
+  // console.log(`Pag Controller`);
+  // Render Results
+  resultsView.render(model.getSearchResultsPage(goToPage));
+
+  // Render the pagination on each page
+  paginationView.render(model.state.search);
+  // console.log(goToPage);
+};
+
 const init = function () {
   recipeView.addHandlerRender(controlRecipes);
   searchView.addHandlerSearch(controlSearchResults);
+  paginationView.addHandlerClick(controlPagination);
 };
 
 init();
