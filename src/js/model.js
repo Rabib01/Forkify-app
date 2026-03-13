@@ -5,6 +5,7 @@ import { getJSON } from './helpers.js';
 export const state = {
   recipe: {},
   search: { query: '', results: [], resultsPerPage: RES_PER_PAGE, page: 1 },
+  bookmarks: [],
 };
 
 export const loadRecipie = async function (id) {
@@ -27,6 +28,9 @@ export const loadRecipie = async function (id) {
     };
     // console.log(state.recipe);
     // console.log(data, response);
+    if (state.bookmarks.some(bookmark => bookmark.id === id))
+      state.recipe.bookmarked = true;
+    else state.recipe.bookmarked = false;
   } catch (error) {
     console.error(`${error} 😎😎`);
     throw error;
@@ -49,6 +53,8 @@ export const loadSearchResults = async function (query) {
       };
     });
     // console.log(state.search.results);
+    // reset te page to one whenever we are searching for a recipe on a different page
+    state.search.page = 1;
   } catch (error) {
     console.error(`${error} 😎😎`);
     throw error;
@@ -72,4 +78,21 @@ export const updateRecipeServings = function (newServings) {
   });
 
   state.recipe.servings = newServings;
+};
+
+export const addBookmark = function (recipe) {
+  // Add bookamrk
+  state.bookmarks.push(recipe);
+
+  // mark current recipe as bookamrkes
+  if (recipe.id === state.recipe.id) state.recipe.bookmarked = true;
+};
+
+export const deleteBookmark = function (id) {
+  // DeleteBookmark
+  const index = state.bookmarks.findIndex(el => el.id === id);
+  state.bookmarks.slice(index, 1);
+
+  // mark current recipe as not bookamrked
+  if (id === state.recipe.id) state.recipe.bookmarked = false;
 };
