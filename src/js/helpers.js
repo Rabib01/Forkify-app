@@ -20,6 +20,27 @@ export const getJSON = async function (url) {
   }
 };
 
+// SendJSON: function to send data to api
+export const sendJSON = async function (url, uploadData) {
+  try {
+    const fetchPro = fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(uploadData),
+    });
+    const response = await Promise.race([fetchPro, timeout(TIMEOUT_SECONDS)]);
+
+    const data = await response.json();
+    if (!response.ok) throw new Error(`${data.message} : ${response.status}`);
+    return data;
+  } catch (error) {
+    console.error(`${error} 😎😎`);
+    throw error;
+  }
+};
+
 /**
  * REMEMBER: promise.race takes in an array of promises and returns the one that is resolved firstly
  */

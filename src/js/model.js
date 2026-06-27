@@ -1,6 +1,6 @@
 import { async } from 'regenerator-runtime';
-import { API_URL, RES_PER_PAGE } from './config';
-import { getJSON } from './helpers.js';
+import { API_URL, RES_PER_PAGE, KEY } from './config';
+import { getJSON, sendJSON } from './helpers.js';
 
 export const state = {
   recipe: {},
@@ -97,7 +97,7 @@ export const addBookmark = function (recipe) {
 export const deleteBookmark = function (id) {
   // DeleteBookmark
   const index = state.bookmarks.findIndex(el => el.id === id);
-  state.bookmarks.slice(index, 1);
+  state.bookmarks.splice(index, 1);
 
   // mark current recipe as not bookamrked
   if (id === state.recipe.id) state.recipe.bookmarked = false;
@@ -114,7 +114,7 @@ init();
 // console.log(state.bookmarks);
 
 const clearBookmarks = function () {
-  localStorage.clear('bookmark');
+  localStorage.removeItem('bookmarks');
 };
 
 export const uploadRecipe = async function (newRecipe) {
@@ -156,7 +156,9 @@ export const uploadRecipe = async function (newRecipe) {
       ingredients,
     };
 
-    console.log(recipe);
+    // console.log(recipe);
+    const data = await sendJSON(`${API_URL}?key=${KEY}`, recipe);
+    console.log(data);
   } catch (err) {
     throw err;
   }
