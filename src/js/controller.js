@@ -104,6 +104,7 @@ const controlAddRecipe = async function (newRecipe) {
     addRecipeView.renderSpinner();
 
     await model.uploadRecipe(newRecipe);
+
     // turning it backto our own format for recipes
     console.log(model.state.recipe);
 
@@ -112,6 +113,15 @@ const controlAddRecipe = async function (newRecipe) {
 
     //display a success message
     addRecipeView.renderMessage();
+
+    // after displaying success message we also want to render the bookmark view
+    bookmarksView.render(model.state.bookmarks);
+
+    //change the id of the url by using the history api. PushState() changes url without reloading page. state, title:, url:`#${model.state.recipe.id}`
+    window.history.pushState(null, '', `#${model.state.recipe.id}`);
+
+    // automatically going backto the last page using hte history api using using the back and forward button
+    // window.history.back();
 
     //close form window - not immediately but after sometime to display a nice successful message
     setTimeout(function () {
