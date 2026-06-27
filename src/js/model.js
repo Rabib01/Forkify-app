@@ -8,24 +8,41 @@ export const state = {
   bookmarks: [],
 };
 
+const createRecipeObject = function (data) {
+  const { recipe } = data.data;
+  return {
+    id: recipe.id,
+    title: recipe.title,
+    publisher: recipe.publisher,
+    sourceURL: recipe.source_url,
+    imageURL: recipe.image_url,
+    servings: recipe.servings,
+    cookingTime: recipe.cooking_time,
+    ingredients: recipe.ingredients,
+    ...(recipe.key && { key: recipe.key }),
+    /*
+    And opereator shortciruits 
+    if recipe.key is falsy value in case it doesn't exist 
+    nothing happens here. Destructurng does basically nothing 
+    if the key does exist then thesecond art of the operator is returned 
+    so it is the key object is returned. 
+    spread that object to put the values at the end 
+    same as if the values were out here : 
+    key: recipe.key 
+    so this is a nice trick to put it here and this is very handy trick sometimes
+    After this we get the key and the bookmark is somehow magically becomes true
+    I am such a bad developer
+    */
+  };
+};
+
 export const loadRecipie = async function (id) {
   try {
     // 'https://forkify-api.jonas.io/api/v2/recipes/5ed6604591c37cdc054bc886'
     const data = await getJSON(`${API_URL}${id}`);
+    state.recipe = createRecipeObject(data);
     // console.log(data);
 
-    const { recipe } = data.data;
-
-    state.recipe = {
-      id: recipe.id,
-      title: recipe.title,
-      publisher: recipe.publisher,
-      sourceURL: recipe.source_url,
-      imageURL: recipe.image_url,
-      servings: recipe.servings,
-      cookingTime: recipe.cooking_time,
-      ingredients: recipe.ingredients,
-    };
     // console.log(state.recipe);
     // console.log(data, response);
     if (state.bookmarks.some(bookmark => bookmark.id === id))
@@ -158,7 +175,8 @@ export const uploadRecipe = async function (newRecipe) {
 
     // console.log(recipe);
     const data = await sendJSON(`${API_URL}?key=${KEY}`, recipe);
-    console.log(data);
+    state.recipe = createRecipeObject(data);
+    addBookmark(state.recipe);
   } catch (err) {
     throw err;
   }

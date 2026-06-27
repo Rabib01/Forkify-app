@@ -1,6 +1,6 @@
 import * as model from './model.js';
 import searchView from './Views/searchView.js';
-
+import { MODAL_ClOSE_SEC } from './config.js';
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import recipeView from './Views/recipeView.js';
@@ -100,7 +100,23 @@ const controlAddRecipe = async function (newRecipe) {
   try {
     // we are not awaiting hte pronise and so we cannot see the renderError HTML in case of bad format and so we need to make this function an async function and await for thepromise to occur
 
+    // Render spinner for newly uploaded recipes to show the use that something is happening
+    addRecipeView.renderSpinner();
+
     await model.uploadRecipe(newRecipe);
+    // turning it backto our own format for recipes
+    console.log(model.state.recipe);
+
+    /** Render the new recipe */
+    recipeView.render(model.state.recipe);
+
+    //display a success message
+    addRecipeView.renderMessage();
+
+    //close form window - not immediately but after sometime to display a nice successful message
+    setTimeout(function () {
+      addRecipeView.toggleWindow();
+    }, MODAL_ClOSE_SEC * 1000);
   } catch (error) {
     console.error('💥', error);
     addRecipeView.renderError(error.message);
