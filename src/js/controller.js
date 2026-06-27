@@ -94,8 +94,17 @@ const controlAddBookmark = function () {
   bookmarksView.update(model.state.bookmarks);
 };
 
-const controlAddRecipe = function (newRecipe) {
-  console.log(newRecipe);
+const controlAddRecipe = async function (newRecipe) {
+  // console.log(newRecipe);
+  // upload Recipe data
+  try {
+    // we are not awaiting hte pronise and so we cannot see the renderError HTML in case of bad format and so we need to make this function an async function and await for thepromise to occur
+
+    await model.uploadRecipe(newRecipe);
+  } catch (error) {
+    console.error('💥', error);
+    addRecipeView.renderError(error.message);
+  }
 };
 
 const init = function () {

@@ -109,6 +109,57 @@ const init = function () {
   const storage = localStorage.getItem('bookmarks');
   if (storage) state.bookmarks = JSON.parse(storage);
 };
-
 init();
-console.log(state.bookmarks);
+
+// console.log(state.bookmarks);
+
+const clearBookmarks = function () {
+  localStorage.clear('bookmark');
+};
+
+export const uploadRecipe = async function (newRecipe) {
+  //Take raw input data and transform to format that we get out fromapi
+  // ingredients array that contains a bunch of objects. Our data has 6 ingredent properties, ingredients separated by comma, each of these ingredients must be converted to one string
+  // make data in one array. We use a map. To convert new arrays based on existing data. Convert the object back into array uisng object.entries
+  // we want to filter the array that has the first element as ingredient
+
+  // console.log(Object.entries(newRecipe));
+
+  // after this take the data ou2t of the string and then putinto object so we se .map
+
+  // if the quantity does not exist we want it to be null or else we want a number quantity? : +quantity : null
+
+  // we still get undefined if we just put a quantity on ingredient with just 6. It was done by desing for learning purposes and it creates undefined. Therefore our format should be quantity, unit, description in that exact order
+
+  // after ther error is handled we will want to render the error message in the addRecipeView
+
+  try {
+    const ingredients = Object.entries(newRecipe)
+      .filter(entry => entry[0].startsWith('ingredient') && entry[1] !== '')
+      .map(ing => {
+        const ingArray = ing[1].replaceAll(' ', '').split(',');
+        if (ingArray.length !== 3)
+          throw new Error(
+            'Wrong Ingredient format, please use the correct format',
+          );
+        const [quantity, unit, description] = ingArray;
+        // return an object with this
+        return { quantity: quantity ? +quantity : null, unit, description };
+      });
+    const recipe = {
+      title: newRecipe.title,
+      source_url: newRecipe.sourceUrl,
+      image_url: newRecipe.image,
+      publisher: newRecipe.publisher,
+      cooking_time: +newRecipe.cookingTime,
+      servings: +newRecipe.servings,
+      ingredients,
+    };
+
+    console.log(recipe);
+  } catch (err) {
+    throw err;
+  }
+
+  // object should be in the same format that the api is ready to recipeView
+};
