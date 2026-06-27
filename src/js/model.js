@@ -39,7 +39,7 @@ const createRecipeObject = function (data) {
 export const loadRecipie = async function (id) {
   try {
     // 'https://forkify-api.jonas.io/api/v2/recipes/5ed6604591c37cdc054bc886'
-    const data = await AJAX(`${API_URL}${id}`);
+    const data = await AJAX(`${API_URL}${id}?key=${KEY}`);
     state.recipe = createRecipeObject(data);
     // console.log(data);
 
@@ -61,7 +61,7 @@ const persistBookmarks = function () {
 export const loadSearchResults = async function (query) {
   try {
     state.search.query = query;
-    const data = await AJAX(`${API_URL}?search=${query}`);
+    const data = await AJAX(`${API_URL}?search=${query}&key=${KEY}`);
     // console.log(data);
 
     state.search.results = data.data.recipes.map(rec => {
