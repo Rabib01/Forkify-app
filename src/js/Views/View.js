@@ -39,6 +39,9 @@ export default class View {
     // we will only have the text of updateServings from span class = "recipe__info-data recipe__info-data--people">5</span> and .trim() → trims white spaces
     newElements.forEach((newEle, i) => {
       const curEle = curElements[i];
+
+      if (!curEle) return;
+
       if (
         !newEle.isEqualNode(curEle) &&
         newEle.firstChild?.nodeValue.trim() !== ''
